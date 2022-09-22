@@ -1,4 +1,4 @@
-# API для сервиса YamDB1
+# API для сервиса YamDB
 
 ![yamdb_final_workflow](https://github.com/VladimirMonolith/yamdb_final/actions/workflows/yamdb_workflow.yml/badge.svg)
 
