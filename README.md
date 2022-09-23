@@ -1,8 +1,10 @@
-# CI/CD для API сервиса YaMDb
+# CI/CD API сервиса YaMDb
 
-![ci_cd_api_yamdb workflow](https://github.com/VladimirMonolith/yamdb_final/actions/workflows/yamdb_workflow.yml/badge.svg)
+![ci/cd_api_yamdb workflow](https://github.com/VladimirMonolith/yamdb_final/actions/workflows/yamdb_workflow.yml/badge.svg)
 
 ## Описание
+
+CI/CD API сервиса YaMDb.Workflow подразумевает автоматический запуск тестов, обновление образа проекта на DockerHub, автоматический деплой на боевой сервер и запуск сервиса, отправку уведомления о успешном завершении workflow в Телеграм при выполнении команды push.
 
 Проект YaMDb собирает отзывы пользователей на произведения.Произведения делятся на категории: "Категории", "Фильмы", "Музыка".Список категорий (Category) может быть расширен администратором (например, можно добавить категорию "Артхаус").
 
@@ -24,7 +26,7 @@
 - Возможность получения подробной информации о себе и удаления своего аккаунта.
 - Фильтрация по полям.
 
-#### Документация к API доступна по адресу [http://localhost/redoc/](http://127.0.0.1:8000/redoc/) после запуска сервера с проектом
+#### Документация к API доступна по адресу http://<публичный ip выделенного сервера>/redoc/ после запуска сервера с проектом
 
 #### Технологии
 
@@ -32,35 +34,75 @@
 - Django 2.2.16
 - Django Rest Framework 3.12.4
 - Simple JWT
-- PostgreSQL
 - Docker
 - Docker-compose
+- PostgreSQL
+- Gunicorn
+- Nginx
+- GitHub Actions
+- Выделенный сервер Linux Ubuntu 22.04 с публичным ip
 
 #### Запуск проекта в dev-режиме
 
-- Установите Docker, если это необходимо.  
 - Склонируйте репозиторий:  
 ``` git clone <название репозитория> ```
 - Перейдите в директорию infra:  
-``` cd infra_sp2/infra/ ```  
+``` cd yamdb_final/infra/ ```  
 - Создайте файл .env по образцу:  
 ``` cp .env.example .env ```  
-- Запустите docker-compose:  
-``` docker-compose up -d ```
-- Примените миграции:  
-``` docker-compose exec web python manage.py migrate ```
-- Создайте суперпользователя:  
-``` docker-compose exec web python manage.py createsuperuser ```
-- Загрузите тестовые данные:  
-``` docker-compose exec web python manage.py loaddata fixtures.json ```
-- Примеры команд для работы с контейнерами:
+- Выполнить вход на удаленный сервер
+- Установить docker:  
+``` sudo apt install docker.io ```
+- Установить docker-compose:
 
 ``` bash
-    docker stats - мониторинг запущенных контейнеров  
-    docker-compose stop - остановить работу  
-    docker-compose down -v  - удалить вместе с зависимостями  
-    docker-compose up -d --build - пересобрать и запустить заново    
+    sudo apt-get update
+    sudo apt-get install docker-compose-plagin
+    sudo apt install docker-compose     
 ```
+
+или воспользоваться официальной [инструкцией](https://docs.docker.com/compose/install/)
+
+- Находясь локально в директории infra/, скопировать файлы docker-compose.yml и nginx.conf на удаленный сервер:
+
+```bash
+scp docker-compose.yml <username>@<host>:/home/<username>/
+scp -r nginx/ <username>@<host>:/home/<username>/
+```
+
+- Для правильной работы workflow необходимо добавить в Secrets данного репозитория на GitHub переменные окружения:
+
+```bash
+Переменные PostgreSQL, ключ проекта Django и их значения по-умолчанию можно взять из файла .env.example, затем установить свои.
+
+DOCKER_USERNAME=<имя пользователя DockerHub>
+DOCKER_PASSWORD=<пароль от DockerHub>
+
+USER=<username для подключения к удаленному серверу>
+HOST=<ip сервера>
+PASSPHRASE=<пароль для сервера, если он установлен>
+SSH_KEY=<ваш приватный SSH-ключ (для получения команда: cat ~/.ssh/id_rsa)>
+
+TELEGRAM_TO=<id вашего Телеграм-аккаунта>
+TELEGRAM_TOKEN=<токен вашего бота>
+```
+
+#### Workflow проекта
+
+- **запускается при выполнении команды git push**
+- **tests:** проверка кода на соответствие PEP8, запуск pytest.
+- **build_and_push_to_docker_hub:** сборка и размещение образа проекта на DockerHub.
+- **deploy:** автоматический деплой на боевой сервер и запуск проекта.
+- **send_massage:** отправка уведомления пользователю в Телеграм.
+
+#### После успешного результата работы workflow
+
+- Примените миграции:  
+``` sudo docker-compose exec web python manage.py migrate ```
+- Создайте суперпользователя:  
+``` sudo docker-compose exec web python manage.py createsuperuser ```
+- Загрузите тестовые данные:  
+``` sudo docker-compose exec web python manage.py loaddata fixtures.json ```
 
 #### Примеры некоторых запросов API
 

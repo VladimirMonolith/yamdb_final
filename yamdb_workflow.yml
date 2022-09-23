@@ -1,4 +1,4 @@
-name: ci_cd_api_yamdb workflow
+name: ci/cd_api_yamdb workflow
 
 on: [push]
 
