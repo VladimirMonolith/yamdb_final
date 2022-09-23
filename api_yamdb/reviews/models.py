@@ -1,11 +1,8 @@
 from datetime import datetime
 
 from django.contrib.auth import get_user_model
-from django.core.validators import (
-    MaxValueValidator,
-    MinValueValidator,
-    RegexValidator
-)
+from django.core.validators import (MaxValueValidator, MinValueValidator,
+                                    RegexValidator)
 from django.db import models
 
 from api_yamdb.settings import LENGTH_TEXT
