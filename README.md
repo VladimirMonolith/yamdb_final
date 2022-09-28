@@ -1,4 +1,4 @@
-# CI/CD API сервиса YaMDb
+# CI/CD API сервиса YaMDb45
 
 ![ci/cd_api_yamdb workflow](https://github.com/VladimirMonolith/yamdb_final/actions/workflows/yamdb_workflow.yml/badge.svg)
 
