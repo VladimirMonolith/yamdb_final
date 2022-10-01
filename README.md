@@ -2,7 +2,7 @@
 
 ![ci/cd_api_yamdb workflow](https://github.com/VladimirMonolith/yamdb_final/actions/workflows/yamdb_workflow.yml/badge.svg)
 
-## Описание123
+## Описание
 
 CI/CD API сервиса YaMDb.Workflow подразумевает автоматический запуск тестов, обновление образа проекта на DockerHub, автоматический деплой на боевой сервер и запуск сервиса, отправку уведомления о успешном завершении workflow в Телеграм при выполнении команды push.
 
